@@ -23,18 +23,23 @@ class main(object):
         # ? Application title bar
         py.display.set_caption("Momentum")
         
-        # ? Initiate the first scene with SceneManager
-        self.sceneList = {
-            "Start" : StartScene(),
-            "Play" : PlayScene()
-        }
-        self.SceneManager = SceneManager(self.sceneList, "Start")
-
         # ? Resource Manager
         self.ResourceManager = ResourceManager()
 
         # ? Is game running?
         self.isRunning = True
+
+        Globe.Game = self
+
+        # ? Initiate the first scene with SceneManager
+        self.sceneList = {
+            "Start" : StartScene,
+            "Play" : PlayScene
+        }
+        self.SceneManager = SceneManager(self.sceneList, "Start")
+
+        # ? Start the application
+        self.run()
 
     def run(self):
         while self.isRunning == True:
@@ -48,8 +53,7 @@ class main(object):
 if __name__ == "__main__":
     py.init()
 
-    Globe.Game = main()
-    Globe.Game.run()
+    main()
 
     py.quit()
     sys.exit()

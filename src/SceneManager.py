@@ -1,5 +1,7 @@
 class SceneManager(object):
     def __init__(self, sceneList, sceneName):
+        self.scene = None
+
         # ? Scene list
         self.sceneList = sceneList
 
@@ -7,7 +9,7 @@ class SceneManager(object):
         self.stackScene = []
 
         # ? Initiate first scene
-        self.gotoScene(self.sceneList[sceneName])
+        self.gotoScene(sceneName)
     
     def gotoScene(self, sceneName): # ? Go to next scene without saving previous scene
         self.scene = self.sceneList[sceneName]()
