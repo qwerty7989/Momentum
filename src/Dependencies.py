@@ -1,5 +1,5 @@
 # ? src/ folder
-from src import Globe # ? Import globe for manage global objects
+from src.Globe import * # ? Import globe for manage global objects
 from src.constant import * # ? All pre-defined constant variables
 from src.SceneManager import * # ? Include Scene Manager as State Machine
 

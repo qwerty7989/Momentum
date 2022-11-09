@@ -1,6 +1,6 @@
 import pygame as py
 import sys
-from src import Globe # ? Import globe for manage global objects
+from src.Globe import * # ? Import globe for manage global objects
 
 class PlayScene(object):
     def __init__(self):

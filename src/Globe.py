@@ -1,7 +1,7 @@
 import sys
 
-class _globe:
+class Globe:
     def __setattr__(self, name, value):
         self.__dict__[name] = value
 
-sys.modules[__name__] = _globe
+sys.modules[__name__] = Globe

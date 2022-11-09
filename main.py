@@ -52,3 +52,4 @@ if __name__ == "__main__":
     Globe.Game.run()
 
     py.quit()
+    sys.exit()
