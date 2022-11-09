@@ -10,9 +10,6 @@ import pygame as py
 # ? Import Dependencies for class object usage 
 from src.Dependencies import *
 
-# ? Include Scene Manager as State Machine
-from src.SceneManager import *
-
 class main(object):
     def __init__(self):
         # ? Application's display resolution
@@ -26,8 +23,15 @@ class main(object):
         # ? Application title bar
         py.display.set_caption("Momentum")
         
-        # ? Initiate the first scene
-        self.SceneManager = SceneManager(StartScene)
+        # ? Initiate the first scene with SceneManager
+        self.sceneList = {
+            "Start" : StartScene(),
+            "Play" : PlayScene()
+        }
+        self.SceneManager = SceneManager(self.sceneList, "Start")
+
+        # ? Resource Manager
+        self.ResourceManager = ResourceManager()
 
         # ? Is game running?
         self.isRunning = True
