@@ -1,0 +1,3 @@
+# ? Resolution
+WINDOW_WIDTH = 520
+WINDOW_HEIGHT = 640
