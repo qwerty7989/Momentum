@@ -34,6 +34,7 @@ class ResourceManager(object):
         self.block = {}
         for i in self.block_name:
             self.block[i] = py.image.load("src\\data\\SingleBlocks\\" + i).convert_alpha()
+            self.block[i] = py.transform.scale(self.block[i], (32, 32))
 
 
         # ? Load Shape
@@ -49,3 +50,14 @@ class ResourceManager(object):
         self.shape = {}
         for i in self.shape_name:
             self.shape[i] = py.image.load("src\\data\\ShapeBlocks\\" + i).convert_alpha()
+            width, height = self.shape[i].get_size()
+            self.shape[i] = py.transform.scale(self.shape[i], (width / 2, height / 2))
+
+
+        self.hud_name = [
+            "sidebar.png"
+        ]
+        self.hud = {}
+        for i in self.hud_name:
+            self.hud[i] = py.image.load("src\\data\\Hud\\" + i).convert_alpha()
+            
