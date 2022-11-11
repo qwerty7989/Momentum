@@ -14,13 +14,7 @@ class Board(object):
         # ? Grid (x,y) start from 0
         self.width = BOARD_WIDTH
         self.height = BOARD_HEIGHT
-        self.board = []
-        for i in range(self.height):
-            new_line = []
-            for j in range(self.width):
-                new_line.append(-1)
-            self.board.append(new_line)
-
+        self.board = [[-1 for x in range(self.width)] for y in range(self.height)]
 
         # ? Load Block and Shape
         self.block = Globe.Game.ResourceManager.block
@@ -49,11 +43,14 @@ class Board(object):
         # ? New piece yet
         self.IsNowPiece = False 
 
+        # ? Hold Piece
+        self.holdPiece = None
+        self.IsUsePieceYet = False
+        self.IsHoldPiece = False
 
         # ? Debug zone
         self.lastAntiFallPressed = py.time.get_ticks() 
         self.naturalFall = False
-
 
     def newPiece(self):
         self.piece = Piece(START_GRID_X, START_GRID_Y)
@@ -71,7 +68,7 @@ class Board(object):
             for j in range(4):
                 p = i * 4 + j
                 if p in self.piece.blockList():
-                    if i + self.piece.y > self.height - 1 or j + self.piece.x > self.width -1 or j + self.piece.x < 1 or self.board[i + self.piece.y][j + self.piece.x] > 1:
+                    if i + self.piece.y > self.height - 1 or j + self.piece.x > self.width - 1 or j + self.piece.x < 0 or self.board[i + self.piece.y][j + self.piece.x] > -1:
                         intersection = True
         return intersection
 
@@ -103,40 +100,112 @@ class Board(object):
         # ? Key pressed
         keys = py.key.get_pressed()
 
+        # ! Natural fall [DONE]
         # ? Piece will naturally "fall" 
-        nowTicks = py.time.get_ticks()
-        if keys[py.K_DOWN] or nowTicks - self.lastTicks >= self.gameTicks:
-            self.lastTicks = nowTicks
-
-            # ? Natural fall
-            if self.naturalFall:
+        if self.naturalFall:
+            nowTicks = py.time.get_ticks()
+            if nowTicks - self.lastTicks >= self.gameTicks:
+                self.lastTicks = nowTicks
+                
                 prevY = self.piece.y
-                self.piece.naturalFall()
+                self.piece.moveDown()
                 if self.intersects():
                     self.piece.y = prevY
+                    if self.IsHoldPiece: 
+                        self.IsUsePieceYet = True
                     self.freeze()
             
+        # ! Move [DONE]
         # ? Piece will "move" left or right or down
-        if keys[py.K_RIGHT] or keys[py.K_LEFT]:
+        if keys[KEY_LEFT] or keys[KEY_RIGHT] or keys[KEY_DOWN] or keys[KEY_HARD_DROP]:
             nowTicks = py.time.get_ticks()
             if nowTicks - self.lastMove >= self.moveTicks:
                 self.lastMove = nowTicks
 
-                if keys[py.K_RIGHT] or keys[py.K_LEFT]:
+                # ! Left
+                if keys[KEY_LEFT]:
                     prevX = self.piece.x
-                    self.piece.movePiece(keys[py.K_RIGHT] - keys[py.K_LEFT])
+                    self.piece.movePiece(-1)
                     if self.intersects():
                         self.piece.x = prevX
-        
+
+                # ! Right
+                if keys[KEY_RIGHT]:
+                    prevX = self.piece.x
+                    self.piece.movePiece(1)
+                    if self.intersects():
+                        self.piece.x = prevX
+
+                # ! Down
+                if keys[KEY_DOWN]:
+                    prevY = self.piece.y
+                    self.piece.moveDown()
+                    if self.intersects():
+                        self.piece.y = prevY
+                        if self.IsHoldPiece: 
+                            self.IsUsePieceYet = True
+                        self.freeze()
+
+                # ! Hard Drop
+                if keys[KEY_HARD_DROP]:
+                    while not self.intersects():
+                        self.piece.y += 1
+                    self.piece.y -= 1
+                    if self.IsHoldPiece: 
+                        self.IsUsePieceYet = True
+                    self.freeze()
+     
+        # ! Rotate
         # ? Piece will "rotate" on different tick from "move"
-        if keys[py.K_UP] and not self.rotatePressed:
+        if (keys[KEY_UP] or keys[KEY_ROTATE_CW] or keys[KEY_ROTATE_CCW] or keys[KEY_ROTATE_180]) and not self.rotatePressed:
             nowTicks = py.time.get_ticks()
             if nowTicks - self.lastRotate >= self.rotateTicks:
-                self.lastRotate = nowTicks
-                self.rotatePressed = True
-                self.piece.rotatePiece()
-        elif not keys[py.K_UP]:
+                # ! Rotate Clockwise
+                if keys[KEY_UP] or keys[KEY_ROTATE_CW]:
+                    self.lastRotate = nowTicks
+                    self.rotatePressed = True
+                    self.piece.rotatePiece(1)
+                    if self.intersects():
+                        self.piece.rotatePiece(-1)
+                        self.rotatePressed = False
+
+                # ! Rotate Counter Clockwise
+                elif keys[KEY_ROTATE_CCW]:
+                    self.lastRotate = nowTicks
+                    self.rotatePressed = True
+                    self.piece.rotatePiece(-1)
+                    if self.intersects():
+                        self.piece.rotatePiece(1)
+                        self.rotatePressed = False
+
+                # ! Rotate 180 Degree
+                elif keys[KEY_ROTATE_180]:
+                    self.lastRotate = nowTicks
+                    self.rotatePressed = True
+                    self.piece.rotatePiece(1)
+                    self.piece.rotatePiece(1)
+                    if self.intersects():
+                        self.piece.rotatePiece(-1)
+                        self.piece.rotatePiece(-1)
+                        self.rotatePressed = False
+
+        elif not (keys[KEY_UP] or keys[KEY_ROTATE_CW] or keys[KEY_ROTATE_CCW] or keys[KEY_ROTATE_180]):
             self.rotatePressed = False
+
+        # ! Hold [DONE]
+        if keys[KEY_HOLD]:
+            if not self.IsHoldPiece:       
+                self.piece.resetPosition()       
+                self.holdPiece = self.piece
+                self.newPiece()
+                self.IsHoldPiece = True
+
+            elif self.IsHoldPiece and self.IsUsePieceYet: 
+                self.piece.resetPosition()
+                self.tempPiece = self.piece
+                self.piece = self.holdPiece
+                self.holdPiece = self.tempPiece
+                self.IsUsePieceYet = False
 
         # ? Debug zone
         if keys[py.K_f]:

@@ -26,10 +26,10 @@ class ResourceManager(object):
             "LightBlue.png", # I
             "Blue.png",      # J
             "Orange.png",    # L
-            "Yellow.png",    # O
             "Green.png",     # S
             "Purple.png",    # T
             "Red.png",       # Z
+            "Yellow.png"     # O
         ]
         self.block = {}
         for i in self.block_name:
@@ -42,10 +42,10 @@ class ResourceManager(object):
             "I.png", # Light Blue
             "J.png", # Blue
             "L.png", # Orange
-            "O.png", # Yellow
             "S.png", # Green
             "T.png", # Purple
-            "Z.png"  # Red
+            "Z.png", # Red
+            "O.png"  # Yellow
         ]
         self.shape = {}
         for i in self.shape_name:

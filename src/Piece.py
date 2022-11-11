@@ -11,6 +11,12 @@ class Piece(object):
         8  9 10 11
        12 13 14 15
 
+    Matrix
+        0  1  2  3  4
+        5  6  7  8  9
+       10 11 12 13 14
+       15 16 17 18 19
+
     I-piece
         1
         5        4 5 6 7      
@@ -26,14 +32,14 @@ class Piece(object):
             [[0, 4, 5, 6], [2, 1, 5, 9], [10, 6, 5, 4], [8, 9, 5, 1]],
             # L-piece
             [[3, 7, 6, 5], [11, 10, 6, 2], [9, 5, 6, 7], [1, 2, 6, 10]],
-            # O-piece (O-Spin, Let's Goooo!!!)
-            [[1, 2, 5, 6], [2, 6, 5, 1], [6, 5, 1, 2], [5, 1, 2, 6]],
             # S-piece
             [[7, 6, 10, 9], [15, 11, 10, 6], [13, 14, 10, 11], [5, 9, 10, 14]],
             # T-piece
             [[1, 4, 5, 6], [6, 1, 5, 9], [9, 6, 5, 4], [4, 9, 5, 1]],
             # Z-piece
             [[4, 5, 9, 10], [6, 10, 9, 13], [14, 13, 9, 8],[12, 8, 9, 5]],
+            # O-piece (O-Spin, Let's Goooo!!!)
+            [[1, 2, 5, 6], [2, 6, 5, 1], [6, 5, 1, 2], [5, 1, 2, 6]],
         ]
         
     def __init__(self, x, y):
@@ -47,6 +53,10 @@ class Piece(object):
         self.type = random.randint(0, len(self.pieces) - 1)
         self.rotation = 0
 
+    def resetPosition(self):
+        self.x = START_GRID_X
+        self.y = START_GRID_Y
+
     def blockList(self):
         return self.pieces[self.type][self.rotation]
 
@@ -57,20 +67,29 @@ class Piece(object):
         y = (v + 1) * BLOCK_SIZE  
         return (x, y)
 
+    def rotatePiece(self, r):
+        self.rotation = (self.rotation + r) % len(self.pieces[self.type])
 
-    def rotatePiece(self):
-        self.rotation = (self.rotation + 1) % len(self.pieces[self.type])
+        # ! I
+        if self.type == 0:
+            pass
+        
+        # ! J, L, S, T, Z
+        if self.type >= 1 and self.type <= 5:
+            pass
 
-    def naturalFall(self):
+        # ! O
+        if self.type == 6:
+            pass
+
+    def moveDown(self):
         self.y += 1
 
     def movePiece(self, x):
         self.x += x
 
-
     def update(self):
         pass
-
 
     def draw(self, screen):
         # ? Block
