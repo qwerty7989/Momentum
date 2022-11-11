@@ -9,12 +9,13 @@ BOARD_HEIGHT = 20
 # ? Tick in each Frame
 TICK_PER_FRAME = 100/6
 
-GAME_FRAME = 20
+GAME_FRAME = 25
 MOVE_FRAME = 10
+ROTATE_FRAME = 10
 
 # ? Start position 
-START_GRID_X = 4
-START_GRID_Y = -1
+START_GRID_X = 3
+START_GRID_Y = 0
 
 # ? Size of each Block
 BLOCK_SIZE = 32

@@ -9,7 +9,7 @@ class Piece(object):
         0  1  2  3
         4  5  6  7
         8  9 10 11
-    12 13 14 15
+       12 13 14 15
 
     I-piece
         1
@@ -21,7 +21,7 @@ class Piece(object):
     # https://tetris.fandom.com/wiki/SRS
     pieces = [
             # I-piece
-            [[4, 5, 6, 7], [2, 6, 10, 14], [11, 10, 9, 8],[13, 9, 5, 1]],
+            [[4, 5, 6, 7], [2, 6, 10, 14], [9, 8, 10, 11],[13, 9, 5, 1]],
             # J-piece
             [[0, 4, 5, 6], [2, 1, 5, 9], [10, 6, 5, 4], [8, 9, 5, 1]],
             # L-piece
@@ -39,7 +39,7 @@ class Piece(object):
     def __init__(self, x, y):
         # ? Load Block and Shape
         self.block = Globe.Game.ResourceManager.block
-        self.shape = Globe.Game.ResourceManager.shape
+        self.block_name = Globe.Game.ResourceManager.block_name
 
         # ? Data about each piece
         self.x = x
@@ -47,22 +47,25 @@ class Piece(object):
         self.type = random.randint(0, len(self.pieces) - 1)
         self.rotation = 0
 
+    def blockList(self):
+        return self.pieces[self.type][self.rotation]
+
     def positionConverter(self, u, v):
         # Start counting the 1st top-left block as (1, 1)
         # And the bottom-right block as (10, 20)
-        x = u * BLOCK_SIZE # 32 is offset to border of the grid (1 Block = 32 pixels)
-        y = v * BLOCK_SIZE  
+        x = (u + 1) * BLOCK_SIZE # 32 is offset to border of the grid (1 Block = 32 pixels)
+        y = (v + 1) * BLOCK_SIZE  
         return (x, y)
 
+
     def rotatePiece(self):
-        self.rotate = (self.rotation + 1) % len(self.pieces[self.type])
+        self.rotation = (self.rotation + 1) % len(self.pieces[self.type])
 
     def naturalFall(self):
         self.y += 1
 
-    def movePiece(self, x, y):
+    def movePiece(self, x):
         self.x += x
-        self.y += y
 
 
     def update(self):
@@ -71,6 +74,8 @@ class Piece(object):
 
     def draw(self, screen):
         # ? Block
-        screen.blit(self.shape["I.png"], self.positionConverter(self.x, self.y))
-
-        # screen.blit(self.block["Blue.png"], positionConverter(self.gridPosX, self.gridPosY))
+        for i in range(4):
+            for j in range(4):
+                p = i * 4 + j
+                if p in self.blockList():
+                    screen.blit(self.block[self.block_name[self.type]], self.positionConverter(j + self.x, i + self.y))

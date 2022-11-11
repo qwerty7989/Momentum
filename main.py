@@ -49,6 +49,7 @@ class main(object):
             self.SceneManager.scene.draw(self.screen)
         
             py.display.update()
+            self.clock.tick(TICK_PER_FRAME)
 
 if __name__ == "__main__":
     py.init()
