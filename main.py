@@ -34,7 +34,9 @@ class main(object):
         # ? Initiate the first scene with SceneManager
         self.sceneList = {
             "Start" : StartScene,
-            "Play" : PlayScene
+            "Play" : PlayScene,
+            "Scoreboard" : ScoreboardScene,
+            "Gameover" : GameoverScene
         }
         self.SceneManager = SceneManager(self.sceneList, "Start")
 

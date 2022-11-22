@@ -17,11 +17,18 @@ class Hud(object):
     def draw(self, screen):
         # ? HUD - Left side
         screen.blit(self.hud["sidebarLeft.png"], (0, 0))
+
+        # ? Holding piece
         screen.blit(self.hud["holdingHud.png"], (24, 104))
+
 
         # ? HUD - Right side
         screen.blit(self.hud["sidebarRight.png"], (608, 0))
+        
+        # ? Queue piece
         screen.blit(self.hud["queueHud.png"], (632, 104))
+
+
 
         # ? Background - Board
         screen.blit(self.background["Board.png"], (MARGIN_WIDTH, MARGIN_HEIGHT))

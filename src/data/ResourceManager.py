@@ -45,24 +45,6 @@ class ResourceManager(object):
             self.block[i] = py.image.load("src\\data\\SingleBlocks\\" + i).convert_alpha()
             self.block[i] = py.transform.scale(self.block[i], (32, 32))
 
-
-        # ? Load Shape
-        self.shape_name = [
-            "I.png", # Light Blue
-            "J.png", # Blue
-            "L.png", # Orange
-            "S.png", # Green
-            "T.png", # Purple
-            "Z.png", # Red
-            "O.png"  # Yellow
-        ]
-        self.shape = {}
-        for i in self.shape_name:
-            self.shape[i] = py.image.load("src\\data\\ShapeBlocks\\" + i).convert_alpha()
-            width, height = self.shape[i].get_size()
-            self.shape[i] = py.transform.scale(self.shape[i], (width / 2, height / 2))
-
-
         self.hud_name = [
             "sidebarLeft.png",
             "sidebarRight.png",
@@ -74,4 +56,12 @@ class ResourceManager(object):
             self.hud[i] = py.image.load("src\\data\\Hud\\" + i).convert_alpha()
             
         # ? System Font 
-        self.myFont = py.font.Font("fonts\\font.ttf" , 60)
+        self.myFontBig = py.font.Font("fonts\\font.ttf" , 60)
+        self.myFontMedium = py.font.Font("fonts\\font.ttf" , 48)
+        self.myFontSmall = py.font.Font("fonts\\font.ttf" , 36)
+
+        self.myFont = {
+            "Big": self.myFontBig,
+            "Medium": self.myFontMedium,
+            "Small": self.myFontSmall
+        }

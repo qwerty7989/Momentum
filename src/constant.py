@@ -52,11 +52,11 @@ KEY_EXIT = py.K_q
 # as possible 
 
 # ? PlayScene
-# hard-drop shadow[DONE] -> complete line detector[DONE] -> 7-bags system[DONE], "holding" display[DONE], "queue piece" display[DONE] -> 40 line counter -> game sound with bfxr -> some gimmick to the game. i.e. Skill, well just something. 
+# hard-drop shadow[DONE] -> complete line detector[DONE] -> 7-bags system[DONE], "holding" display[DONE], "queue piece" display[DONE] -> 40 line counter[DONE] -> game sound with bfxr -> some gimmick to the game. i.e. Skill, well just something. 
 # Add some timer to track the time to complete 40-line
 
 # ? StartScene
-# Start game -> Option -> Scoreboard -> Credit -> Exit
+# Start game -> Option -> Scoreboard -> Credit -> Exit[DONE]
 # Option would copied from Tetr.io if the DAS ARS etc. were implemented
 # Scoreboard save in csv format
 

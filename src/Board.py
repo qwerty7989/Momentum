@@ -19,8 +19,8 @@ class Board(object):
 
         # ? Load Block and Shape
         self.block = Globe.Game.ResourceManager.block
-        self.shape = Globe.Game.ResourceManager.shape
         self.block_name = Globe.Game.ResourceManager.block_name
+        self.myFont = Globe.Game.ResourceManager.myFont
 
         # ? Main game clock
         self.Frame = TICK_PER_FRAME
@@ -55,6 +55,10 @@ class Board(object):
         # ? Line clear counter
         self.lineClearedCounter = 0
 
+        # ? Timer
+        self.timerSecond = 0
+        self.lastClockTicks = py.time.get_ticks()
+
         # ? Generate Piece Bag (7-Bag system)
         self.pieceBag = self.generatePieceBag()
         self.nextPieceBag = self.generatePieceBag()
@@ -62,7 +66,9 @@ class Board(object):
 
         # ? Debug zone
         self.lastAntiFallPressed = py.time.get_ticks() 
-        self.showDebug = True
+        self.autoWin = False # False
+        self.gameOver = False # False
+        self.showDebug = False # False
 
     def newPiece(self):
         if self.indexPieceBag == 7:
@@ -120,8 +126,8 @@ class Board(object):
                     self.board[i + self.piece.y][j + self.piece.x] = self.piece.type
         self.lineClearedCounter += self.clearLines()
         self.newPiece()
-        if self.intersects():
-            self.state = "gameover"
+        if self.intersects() or self.gameOver: # ? Gameover
+            Globe.Game.SceneManager.gotoScene("Gameover")
 
     def clearLines(self):
         lineCleared = 0
@@ -140,15 +146,28 @@ class Board(object):
         print(lineCleared)
         return lineCleared
 
+    
+    def writeText(self, text, color, size):
+        self.text = self.myFont[size].render(text, False, color)
+
     def update(self):
         # ? Exit game
         for event in py.event.get():
             if event.type == py.QUIT:
                 py.quit()
                 sys.exit()
-            if self.showDebug and event.type == py.KEYDOWN:
-                print(py.key.name(event.key))
-        
+            if event.type == py.KEYDOWN:
+                if self.showDebug:
+                    print(py.key.name(event.key))
+                
+                if event.key == KEY_EXIT:
+                    Globe.Game.SceneManager.gotoScene("Start")
+
+        # ? 40-Lines completed
+        if self.autoWin or self.lineClearedCounter >= 40:
+            Globe.Game.clearedTime = self.timerSecond
+            Globe.Game.SceneManager.gotoScene("Scoreboard")
+
         # ? If there's no piece, create new.
         if not self.IsNowPiece:
             self.newPiece()
@@ -156,6 +175,11 @@ class Board(object):
 
         # ? Key pressed
         keys = py.key.get_pressed()
+
+        clockTicks = py.time.get_ticks()
+        if (clockTicks - self.lastClockTicks) > 1000:
+            self.timerSecond += 1
+            self.lastClockTicks = clockTicks
 
         # ! Natural fall [DONE]
         # ? Piece will naturally "fall" 
@@ -312,3 +336,14 @@ class Board(object):
                     screen.blit(self.block[self.block_name[self.board[y][x]]], self.positionConverter(x, y))
 
         
+        # ? Line complete counter
+        self.writeText("LINES", (200, 200, 200), "Small")
+        screen.blit(self.text, ((32 * 4) - 8, (32 * 14)))
+        self.writeText((str)(self.lineClearedCounter) + "/40", (200, 200, 200), "Small")
+        screen.blit(self.text, ((32 * 4) - 8, (32 * 15)))
+
+        # ? Timer 
+        self.writeText("TIME", (200, 200, 200), "Small")
+        screen.blit(self.text, ((32 * 5) - 24, (32 * 18)))
+        self.writeText((str)(int(self.timerSecond / 60))+ ":" + (str)(int(self.timerSecond / 10)) + (str)(int(self.timerSecond % 10)), (200, 200, 200), "Small")
+        screen.blit(self.text, ((32 * 5) - 24, (32 * 19)))

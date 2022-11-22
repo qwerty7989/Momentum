@@ -9,3 +9,5 @@ from src.data.ResourceManager import *
 # ? src/scenes folder
 from src.scenes.StartScene import *
 from src.scenes.PlayScene import *
+from src.scenes.ScoreboardScene import *
+from src.scenes.GameoverScene import *
