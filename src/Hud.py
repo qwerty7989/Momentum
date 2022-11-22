@@ -1,6 +1,7 @@
 import pygame as py
 import sys
 from src import Globe # ? Import globe for manage global objects
+from src.constant import *
 
 class Hud(object):
     def __init__(self) -> None:
@@ -14,10 +15,15 @@ class Hud(object):
         pass
 
     def draw(self, screen):
-        # ? Background 
-        screen.blit(self.background["Board.png"], (0, 0))
-        
-        # ? HUD
-        screen.blit(self.hud["sidebar.png"], (384, 0))
+        # ? HUD - Left side
+        screen.blit(self.hud["sidebarLeft.png"], (0, 0))
+        screen.blit(self.hud["holdingHud.png"], (24, 104))
+
+        # ? HUD - Right side
+        screen.blit(self.hud["sidebarRight.png"], (608, 0))
+        screen.blit(self.hud["queueHud.png"], (632, 104))
+
+        # ? Background - Board
+        screen.blit(self.background["Board.png"], (MARGIN_WIDTH, MARGIN_HEIGHT))
 
 

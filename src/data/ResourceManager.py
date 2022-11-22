@@ -64,7 +64,10 @@ class ResourceManager(object):
 
 
         self.hud_name = [
-            "sidebar.png"
+            "sidebarLeft.png",
+            "sidebarRight.png",
+            "holdingHud.png",
+            "queueHud.png"
         ]
         self.hud = {}
         for i in self.hud_name:

@@ -1,5 +1,4 @@
 import pygame as py
-import random
 from src import Globe # ? Import globe for manage global objects
 from src.constant import *
 
@@ -25,19 +24,37 @@ class Piece(object):
     """
     # ? Reference from SRS spin
     # https://tetris.fandom.com/wiki/SRS
+    # Backup piece position
+    # pieces = [
+    #         # I-piece
+    #         [[4, 5, 6, 7], [2, 6, 10, 14], [9, 8, 10, 11],[13, 9, 5, 1]],
+    #         # J-piece
+    #         [[0, 4, 5, 6], [2, 1, 5, 9], [10, 6, 5, 4], [8, 9, 5, 1]],
+    #         # L-piece
+    #         [[3, 7, 6, 5], [11, 10, 6, 2], [9, 5, 6, 7], [1, 2, 6, 10]],
+    #         # S-piece
+    #         [[7, 6, 10, 9], [15, 11, 10, 6], [13, 14, 10, 11], [5, 9, 10, 14]],
+    #         # T-piece
+    #         [[1, 4, 5, 6], [6, 1, 5, 9], [9, 6, 5, 4], [4, 9, 5, 1]],
+    #         # Z-piece
+    #         [[4, 5, 9, 10], [6, 10, 9, 13], [14, 13, 9, 8],[12, 8, 9, 5]],
+    #         # O-piece (O-Spin, Let's Goooo!!!)
+    #         [[1, 2, 5, 6], [2, 6, 5, 1], [6, 5, 1, 2], [5, 1, 2, 6]],
+    #     ]
+
     pieces = [
             # I-piece
             [[4, 5, 6, 7], [2, 6, 10, 14], [9, 8, 10, 11],[13, 9, 5, 1]],
-            # J-piece
+            # J-piece (Done)
             [[0, 4, 5, 6], [2, 1, 5, 9], [10, 6, 5, 4], [8, 9, 5, 1]],
-            # L-piece
-            [[3, 7, 6, 5], [11, 10, 6, 2], [9, 5, 6, 7], [1, 2, 6, 10]],
-            # S-piece
-            [[7, 6, 10, 9], [15, 11, 10, 6], [13, 14, 10, 11], [5, 9, 10, 14]],
-            # T-piece
+            # L-piece (Done)
+            [[2, 6, 5, 4], [10, 9, 5, 1], [8, 4, 5, 6], [0, 1, 5, 9]],
+            # S-piece (Done)
+            [[2, 1, 5, 4], [10, 6, 5, 1], [8, 9, 5, 6], [0, 4, 5, 9]],
+            # T-piece (Done)
             [[1, 4, 5, 6], [6, 1, 5, 9], [9, 6, 5, 4], [4, 9, 5, 1]],
-            # Z-piece
-            [[4, 5, 9, 10], [6, 10, 9, 13], [14, 13, 9, 8],[12, 8, 9, 5]],
+            # Z-piece (Done)
+            [[0, 1, 5, 6], [2, 6, 5, 9], [10, 9, 5, 4],[8, 4, 5, 1]],
             # O-piece (O-Spin, Let's Goooo!!!)
             [[1, 2, 5, 6], [2, 6, 5, 1], [6, 5, 1, 2], [5, 1, 2, 6]],
         ]
@@ -51,7 +68,7 @@ class Piece(object):
         # ? Data about each piece
         self.x = x
         self.y = y
-        self.type = random.randint(0, len(self.pieces) - 1)
+        self.type = None
         self.rotation = 0
         self.isShadow = isShadow
 
@@ -65,8 +82,18 @@ class Piece(object):
     def positionConverter(self, u, v):
         # Start counting the 1st top-left block as (1, 1)
         # And the bottom-right block as (10, 20)
-        x = (u + 1) * BLOCK_SIZE # 32 is offset to border of the grid (1 Block = 32 pixels)
-        y = (v + 1) * BLOCK_SIZE  
+        x = (u + MARGIN_WIDTH_BLOCK) * BLOCK_SIZE # 32 is offset to border of the grid (1 Block = 32 pixels)
+        y = (v + MARGIN_HEIGHT_BLOCK) * BLOCK_SIZE  
+        return (x, y)
+
+    def positionConverterFromSideLeft(self, u, v):
+        x = u * BLOCK_SIZE
+        y = v * BLOCK_SIZE
+        return (x, y)
+
+    def positionConverterFromSideRight(self, u, v):
+        x = (u + 19) * BLOCK_SIZE
+        y = v * BLOCK_SIZE
         return (x, y)
 
     def rotatePiece(self, r):
@@ -92,6 +119,74 @@ class Piece(object):
 
     def update(self):
         pass
+
+    def drawSideLeft(self, screen, x, y):
+        # ? Draw each block in a piece
+        # I-piece and O-piece will rendered different (because their width is even, not odd) 
+        if self.type == 0 or self.type == 6:
+            coord = []
+            if self.type == 0: # I-piece
+                for i in range(4):
+                    for j in range(4):
+                        p = i * 4 + j
+                        if p in self.blockList():
+                            if not self.isShadow:
+                                coord = list(self.positionConverterFromSideLeft(j + x, i + y))
+                                coord[0] -= 16
+                                coord[1] -= 16
+                                coord = tuple(coord)
+                                screen.blit(self.block[self.block_name[self.type]], coord)
+            else: # O-piece
+                for i in range(4):
+                    for j in range(4):
+                        p = i * 4 + j
+                        if p in self.blockList():
+                            if not self.isShadow:
+                                coord = list(self.positionConverterFromSideLeft(j + x, i + y))
+                                coord[0] -= 16
+                                coord = tuple(coord)
+                                screen.blit(self.block[self.block_name[self.type]], coord)
+        else:
+            for i in range(4):
+                for j in range(4):
+                    p = i * 4 + j
+                    if p in self.blockList():
+                        if not self.isShadow:
+                            screen.blit(self.block[self.block_name[self.type]], self.positionConverterFromSideLeft(j + x, i + y))
+
+    def drawSideRight(self, screen, x, y):
+        # ? Draw each block in a piece
+        # I-piece and O-piece will rendered different (because their width is even, not odd) 
+        if self.type == 0 or self.type == 6:
+            coord = []
+            if self.type == 0: # I-piece
+                for i in range(4):
+                    for j in range(4):
+                        p = i * 4 + j
+                        if p in self.blockList():
+                            if not self.isShadow:
+                                coord = list(self.positionConverterFromSideRight(j + x, i + y))
+                                coord[0] -= 16
+                                coord[1] -= 16
+                                coord = tuple(coord)
+                                screen.blit(self.block[self.block_name[self.type]], coord)
+            else: # O-piece
+                for i in range(4):
+                    for j in range(4):
+                        p = i * 4 + j
+                        if p in self.blockList():
+                            if not self.isShadow:
+                                coord = list(self.positionConverterFromSideRight(j + x, i + y))
+                                coord[0] -= 16
+                                coord = tuple(coord)
+                                screen.blit(self.block[self.block_name[self.type]], coord)
+        else:
+            for i in range(4):
+                for j in range(4):
+                    p = i * 4 + j
+                    if p in self.blockList():
+                        if not self.isShadow:
+                            screen.blit(self.block[self.block_name[self.type]], self.positionConverterFromSideRight(j + x, i + y))
 
     def draw(self, screen):
         # ? Draw each block in a piece

@@ -1,22 +1,30 @@
 import pygame as py
 
 # ? Resolution
-WINDOW_WIDTH = 608
+WINDOW_WIDTH = 832
 WINDOW_HEIGHT = 704
 
 # ? Board size
 BOARD_WIDTH = 10
 BOARD_HEIGHT = 20
 
+# ? Board Margin (Blocks)
+MARGIN_WIDTH_BLOCK = 8
+MARGIN_HEIGHT_BLOCK = 1
+
+# ? Board Margin (Pixels)
+MARGIN_WIDTH = 224
+MARGIN_HEIGHT = 0
+
 # ? Tick in each Frame
 TICK_PER_FRAME = 100/6
 
 GAME_FRAME = 25
-MOVE_FRAME = 10
-ROTATE_FRAME = 10
+MOVE_FRAME = 7
+ROTATE_FRAME = 7
 
 # ? Start position 
-START_GRID_X = 0
+START_GRID_X = 3
 START_GRID_Y = 0
 
 # ? Size of each Block
@@ -44,7 +52,7 @@ KEY_EXIT = py.K_q
 # as possible 
 
 # ? PlayScene
-# hard-drop shadow[DONE] -> complete line detector -> 7-bags, "holding" display, "queue piece" display -> 40 line counter -> game sound with bfxr -> some gimmick to the game. i.e. Skill, well just something. 
+# hard-drop shadow[DONE] -> complete line detector[DONE] -> 7-bags system[DONE], "holding" display[DONE], "queue piece" display[DONE] -> 40 line counter -> game sound with bfxr -> some gimmick to the game. i.e. Skill, well just something. 
 # Add some timer to track the time to complete 40-line
 
 # ? StartScene

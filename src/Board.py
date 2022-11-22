@@ -1,5 +1,6 @@
 import pygame as py
 import sys
+import random
 from src import Globe # ? Import globe for manage global objects
 from src.Piece import *
 from src.constant import *
@@ -54,20 +55,41 @@ class Board(object):
         # ? Line clear counter
         self.lineClearedCounter = 0
 
+        # ? Generate Piece Bag (7-Bag system)
+        self.pieceBag = self.generatePieceBag()
+        self.nextPieceBag = self.generatePieceBag()
+        self.indexPieceBag = 0
+
         # ? Debug zone
         self.lastAntiFallPressed = py.time.get_ticks() 
         self.showDebug = True
 
     def newPiece(self):
+        if self.indexPieceBag == 7:
+            self.indexPieceBag = 0
+            self.pieceBag = self.nextPieceBag
+            self.nextPieceBag = self.generatePieceBag()
         self.piece = Piece(START_GRID_X, START_GRID_Y, False)
         self.shadow = Piece(START_GRID_X, START_GRID_Y, True)
+        self.piece.type = self.pieceBag[self.indexPieceBag]
         self.shadow.type = self.piece.type
+        self.indexPieceBag += 1
+
+    def generatePieceBag(self):
+        # In each bag consists of 7 piece that contain no duplicate piece
+        pieceBag = []
+        while len(pieceBag) != 7:
+            pieceType = random.randint(0, 6)
+            if pieceType not in pieceBag:
+                pieceBag.append(pieceType)
+
+        return pieceBag 
 
     def positionConverter(self, u, v):
         # Start counting the 1st top-left block as (0, 0)
         # And the bottom-right block as (10, 20)
-        x = (u + 1) * BLOCK_SIZE # 32 is offset to border of the grid (1 Block = 32 pixels)
-        y = (v + 1) * BLOCK_SIZE  
+        x = (u + MARGIN_WIDTH_BLOCK) * BLOCK_SIZE # 32 is offset to border of the grid (1 Block = 32 pixels)
+        y = (v + MARGIN_HEIGHT_BLOCK) * BLOCK_SIZE  
         return (x, y)
 
     def intersects(self):
@@ -103,15 +125,19 @@ class Board(object):
 
     def clearLines(self):
         lineCleared = 0
-        for y in range(self.height - 1, -1, -1):
+        y = self.height - 1
+        while y >= 0:
             isFilled = True
             for x in range(self.width):
                 if self.board[y][x] == -1:
-                    isFilled = False                    
+                    isFilled = False                
             if isFilled:
-                self.board = [[-1 for x in range(self.width)]] + self.board[:y] + self.board[y+1:] 
+                self.board = [[-1 for x in range(self.width)]] + self.board[:y] + self.board[y+1:]
                 lineCleared += 1
+            else:
+                y -= 1
 
+        print(lineCleared)
         return lineCleared
 
     def update(self):
@@ -226,13 +252,15 @@ class Board(object):
         # ! Hold [DONE]
         if keys[KEY_HOLD]:
             if not self.IsHoldPiece:       
-                self.piece.resetPosition()       
+                self.piece.resetPosition()
+                self.piece.rotation = 0
                 self.holdPiece = self.piece
                 self.newPiece()
                 self.IsHoldPiece = True
 
             elif self.IsHoldPiece and self.IsUsePieceYet: 
                 self.piece.resetPosition()
+                self.piece.rotation = 0
                 self.tempPiece = self.piece
                 self.piece = self.holdPiece
                 self.holdPiece = self.tempPiece
@@ -251,7 +279,7 @@ class Board(object):
     def draw(self, screen):
         # ? If there's a piece, draw it
         if self.IsNowPiece:
-            self.piece.draw(screen)
+            # ? Draw hard-drop shadow
             self.shadow.rotation = self.piece.rotation
             self.shadow.x = self.piece.x
             self.shadow.y = self.piece.y
@@ -260,6 +288,22 @@ class Board(object):
                 self.shadow.y += 1
             self.shadow.y -= 1
             self.shadow.draw(screen)
+
+            # ? Draw piece
+            self.piece.draw(screen)
+
+        # ? Draw Piece in Hold Piece HUD
+        if self.IsHoldPiece:
+            self.holdPiece.drawSideLeft(screen, 2, 4)
+
+        # ? Draw Piece in Queue Piece HUD
+        for i in range(self.indexPieceBag, self.indexPieceBag + 5):
+            self.queuePiece = Piece(START_GRID_X, START_GRID_Y, False)
+            if i > 6:
+                self.queuePiece.type = self.nextPieceBag[i % 7]
+            else:
+                self.queuePiece.type = self.pieceBag[i]
+            self.queuePiece.drawSideRight(screen, 2, 4 + (3 * (i - self.indexPieceBag)))
 
         # ? Draw Block placed on the board
         for y in range(self.height):
