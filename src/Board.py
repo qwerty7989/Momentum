@@ -51,9 +51,12 @@ class Board(object):
         # ? Natural Fall
         self.naturalFall = True
 
+        # ? Line clear counter
+        self.lineClearedCounter = 0
+
         # ? Debug zone
         self.lastAntiFallPressed = py.time.get_ticks() 
-        self.showDebug = False
+        self.showDebug = True
 
     def newPiece(self):
         self.piece = Piece(START_GRID_X, START_GRID_Y, False)
@@ -93,12 +96,23 @@ class Board(object):
                 p = i * 4 + j
                 if p in self.piece.blockList():
                     self.board[i + self.piece.y][j + self.piece.x] = self.piece.type
-        # self.break_lines()
+        self.lineClearedCounter += self.clearLines()
         self.newPiece()
         if self.intersects():
             self.state = "gameover"
 
-    
+    def clearLines(self):
+        lineCleared = 0
+        for y in range(self.height - 1, -1, -1):
+            isFilled = True
+            for x in range(self.width):
+                if self.board[y][x] == -1:
+                    isFilled = False                    
+            if isFilled:
+                self.board = [[-1 for x in range(self.width)]] + self.board[:y] + self.board[y+1:] 
+                lineCleared += 1
+
+        return lineCleared
 
     def update(self):
         # ? Exit game
@@ -106,7 +120,7 @@ class Board(object):
             if event.type == py.QUIT:
                 py.quit()
                 sys.exit()
-            if event.type == py.KEYDOWN:
+            if self.showDebug and event.type == py.KEYDOWN:
                 print(py.key.name(event.key))
         
         # ? If there's no piece, create new.
@@ -225,11 +239,14 @@ class Board(object):
                 self.IsUsePieceYet = False
 
         # ? Debug zone
-        if self.showDebug and keys[py.K_f]:
-            nowTicks = py.time.get_ticks()
-            if nowTicks - self.lastAntiFallPressed >= self.gameTicks:
-                self.lastAntiFallPressed = nowTicks
-                self.naturalFall = not self.naturalFall
+        if self.showDebug:
+            if keys[py.K_f]:
+                nowTicks = py.time.get_ticks()
+                if nowTicks - self.lastAntiFallPressed >= self.gameTicks:
+                    self.lastAntiFallPressed = nowTicks
+                    self.naturalFall = not self.naturalFall
+            if keys[py.K_s]:
+                print(self.lineClearedCounter)
 
     def draw(self, screen):
         # ? If there's a piece, draw it
@@ -238,6 +255,7 @@ class Board(object):
             self.shadow.rotation = self.piece.rotation
             self.shadow.x = self.piece.x
             self.shadow.y = self.piece.y
+            self.shadow.type = self.piece.type
             while not self.intersectsShadow():
                 self.shadow.y += 1
             self.shadow.y -= 1
