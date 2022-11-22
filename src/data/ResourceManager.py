@@ -21,6 +21,15 @@ class ResourceManager(object):
             self.title[i] = py.image.load("src\\data\\Title\\" + i).convert_alpha()
             self.title[i] = py.transform.scale(self.title[i], (360, 72))
 
+        # ? Load Shawdow
+        self.shadow_name = [
+            "Single.png" # Single shadow block
+        ]
+        self.shadow = {}
+        for i in self.shadow_name:
+            self.shadow[i] = py.image.load("src\\data\\Ghost\\" + i).convert_alpha()
+            self.shadow[i] = py.transform.scale(self.shadow[i], (32, 32))
+
         # ? Load Block
         self.block_name = [
             "LightBlue.png", # I

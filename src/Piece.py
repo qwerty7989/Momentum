@@ -42,8 +42,9 @@ class Piece(object):
             [[1, 2, 5, 6], [2, 6, 5, 1], [6, 5, 1, 2], [5, 1, 2, 6]],
         ]
         
-    def __init__(self, x, y):
+    def __init__(self, x, y, isShadow):
         # ? Load Block and Shape
+        self.shadow = Globe.Game.ResourceManager.shadow
         self.block = Globe.Game.ResourceManager.block
         self.block_name = Globe.Game.ResourceManager.block_name
 
@@ -52,6 +53,7 @@ class Piece(object):
         self.y = y
         self.type = random.randint(0, len(self.pieces) - 1)
         self.rotation = 0
+        self.isShadow = isShadow
 
     def resetPosition(self):
         self.x = START_GRID_X
@@ -92,9 +94,14 @@ class Piece(object):
         pass
 
     def draw(self, screen):
-        # ? Block
+        # ? Draw each block in a piece
         for i in range(4):
             for j in range(4):
                 p = i * 4 + j
                 if p in self.blockList():
-                    screen.blit(self.block[self.block_name[self.type]], self.positionConverter(j + self.x, i + self.y))
+                    if not self.isShadow:
+                        screen.blit(self.block[self.block_name[self.type]], self.positionConverter(j + self.x, i + self.y))
+                    else:
+                        screen.blit(self.shadow["Single.png"], self.positionConverter(j + self.x, i + self.y))
+
+        

@@ -39,13 +39,28 @@ KEY_EXIT = py.K_q
 
 
 # ! TODO
-"""Add main game logic and gameplay"""
+# ? Concept
+# Normal Tetris with gimmick, goal is to complete 40-line as fast
+# as possible 
 
+# ? PlayScene
+# hard-drop shadow[DONE] -> complete line detector -> 7-bags, "holding" display, "queue piece" display -> 40 line counter -> game sound with bfxr -> some gimmick to the game. i.e. Skill, well just something. 
+# Add some timer to track the time to complete 40-line
+
+# ? StartScene
+# Start game -> Option -> Scoreboard -> Credit 
+# Option would copied from Tetr.io if the DAS ARS etc. were implemented
+# Scoreboard save in csv format
+
+"""Add main game logic and gameplay"""
+"""Add SRS rotation"""
+"""Add SRS spawn"""
+"""Add wall kick"""
 
 """Add Queue/Next (7-bag system)"""
 """Add ARE"""
 """Add DAS"""
-
+"""Add Shadow"""
 
 
 # ! Done

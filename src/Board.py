@@ -48,12 +48,17 @@ class Board(object):
         self.IsUsePieceYet = False
         self.IsHoldPiece = False
 
+        # ? Natural Fall
+        self.naturalFall = True
+
         # ? Debug zone
         self.lastAntiFallPressed = py.time.get_ticks() 
-        self.naturalFall = False
+        self.showDebug = False
 
     def newPiece(self):
-        self.piece = Piece(START_GRID_X, START_GRID_Y)
+        self.piece = Piece(START_GRID_X, START_GRID_Y, False)
+        self.shadow = Piece(START_GRID_X, START_GRID_Y, True)
+        self.shadow.type = self.piece.type
 
     def positionConverter(self, u, v):
         # Start counting the 1st top-left block as (0, 0)
@@ -72,6 +77,16 @@ class Board(object):
                         intersection = True
         return intersection
 
+    def intersectsShadow(self):
+        intersection = False
+        for i in range(4):
+            for j in range(4):
+                p = i * 4 + j
+                if p in self.shadow.blockList():
+                    if i + self.shadow.y > self.height - 1 or j + self.shadow.x > self.width - 1 or j + self.shadow.x < 0 or self.board[i + self.shadow.y][j + self.shadow.x] > -1:
+                        intersection = True
+        return intersection
+
     def freeze(self):
         for i in range(4):
             for j in range(4):
@@ -82,6 +97,8 @@ class Board(object):
         self.newPiece()
         if self.intersects():
             self.state = "gameover"
+
+    
 
     def update(self):
         # ? Exit game
@@ -155,7 +172,7 @@ class Board(object):
                         self.IsUsePieceYet = True
                     self.freeze()
      
-        # ! Rotate
+        # ! Rotate [DONE] [Had to go simpler moveset rather than SRS in order to make it by deadline]
         # ? Piece will "rotate" on different tick from "move"
         if (keys[KEY_UP] or keys[KEY_ROTATE_CW] or keys[KEY_ROTATE_CCW] or keys[KEY_ROTATE_180]) and not self.rotatePressed:
             nowTicks = py.time.get_ticks()
@@ -208,21 +225,28 @@ class Board(object):
                 self.IsUsePieceYet = False
 
         # ? Debug zone
-        if keys[py.K_f]:
+        if self.showDebug and keys[py.K_f]:
             nowTicks = py.time.get_ticks()
             if nowTicks - self.lastAntiFallPressed >= self.gameTicks:
                 self.lastAntiFallPressed = nowTicks
                 self.naturalFall = not self.naturalFall
 
     def draw(self, screen):
+        # ? If there's a piece, draw it
         if self.IsNowPiece:
             self.piece.draw(screen)
+            self.shadow.rotation = self.piece.rotation
+            self.shadow.x = self.piece.x
+            self.shadow.y = self.piece.y
+            while not self.intersectsShadow():
+                self.shadow.y += 1
+            self.shadow.y -= 1
+            self.shadow.draw(screen)
 
+        # ? Draw Block placed on the board
         for y in range(self.height):
             for x in range(self.width):
                 if self.board[y][x] != -1:
                     screen.blit(self.block[self.block_name[self.board[y][x]]], self.positionConverter(x, y))
 
         
-
-
