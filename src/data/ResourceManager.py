@@ -19,7 +19,7 @@ class ResourceManager(object):
         self.title = {}
         for i in self.title_name:
             self.title[i] = py.image.load("src\\data\\Title\\" + i).convert_alpha()
-            self.title[i] = py.transform.scale(self.title[i], (360, 72))
+            self.title[i] = py.transform.scale(self.title[i], (720, 144))
 
         # ? Load Shawdow
         self.shadow_name = [
@@ -73,3 +73,5 @@ class ResourceManager(object):
         for i in self.hud_name:
             self.hud[i] = py.image.load("src\\data\\Hud\\" + i).convert_alpha()
             
+        # ? System Font 
+        self.myFont = py.font.Font("fonts\\font.ttf" , 60)

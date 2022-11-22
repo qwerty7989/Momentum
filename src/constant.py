@@ -20,8 +20,8 @@ MARGIN_HEIGHT = 0
 TICK_PER_FRAME = 100/6
 
 GAME_FRAME = 25
-MOVE_FRAME = 7
-ROTATE_FRAME = 7
+MOVE_FRAME = 10
+ROTATE_FRAME = 10
 
 # ? Start position 
 START_GRID_X = 3
@@ -56,7 +56,7 @@ KEY_EXIT = py.K_q
 # Add some timer to track the time to complete 40-line
 
 # ? StartScene
-# Start game -> Option -> Scoreboard -> Credit 
+# Start game -> Option -> Scoreboard -> Credit -> Exit
 # Option would copied from Tetr.io if the DAS ARS etc. were implemented
 # Scoreboard save in csv format
 
