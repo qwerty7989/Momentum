@@ -20,6 +20,9 @@ class main(object):
         # ? System Clock
         self.clock = py.time.Clock()
 
+        # ? Sound Player
+        self.soundManager = py.mixer.music
+
         # ? Application title bar
         py.display.set_caption("Momentum")
         

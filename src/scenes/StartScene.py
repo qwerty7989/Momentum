@@ -11,6 +11,8 @@ class StartScene(object):
         # ? Load title
         self.title = Globe.Game.ResourceManager.title
         self.myFont = Globe.Game.ResourceManager.myFont
+        self.soundPath = Globe.Game.ResourceManager.sound_path
+        self.soundManager = Globe.Game.soundManager
 
         # ? Click or not?
         self.confirm = False
@@ -27,13 +29,23 @@ class StartScene(object):
 
                 if event.type == py.KEYDOWN: # ? Any key pressed
                     if event.key == KEY_UP:
+                        self.soundManager.load(self.soundPath["Select"])
+                        self.soundManager.play(0)
                         self.selectIndex -= 1
                         if self.selectIndex < 0: self.selectIndex = 3
                     elif event.key == KEY_DOWN:
+                        self.soundManager.load(self.soundPath["Select"])
+                        self.soundManager.play(0)
                         self.selectIndex += 1
                         if self.selectIndex > 3: self.selectIndex = 0
                     
                     if event.key == py.K_z: # ? Confirm
+                        if self.selectIndex != 3:
+                            self.soundManager.load(self.soundPath["Confirm"])
+                            self.soundManager.play(0)
+                        else:
+                            self.soundManager.load(self.soundPath["Back"])
+                            self.soundManager.play(0)
                         self.confirm = True
 
         else: # ? Confirm

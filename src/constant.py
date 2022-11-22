@@ -52,27 +52,27 @@ KEY_EXIT = py.K_q
 # as possible 
 
 # ? PlayScene
-# hard-drop shadow[DONE] -> complete line detector[DONE] -> 7-bags system[DONE], "holding" display[DONE], "queue piece" display[DONE] -> 40 line counter[DONE] -> game sound with bfxr -> some gimmick to the game. i.e. Skill, well just something. 
+# hard-drop shadow[DONE] -> complete line detector[DONE] -> 7-bags system[DONE], "holding" display[DONE], "queue piece" display[DONE] -> 40 line counter[DONE] -> game sound with bfxr[DONE] -> some gimmick to the game. i.e. Skill, well just something. 
 # Add some timer to track the time to complete 40-line
 
 # ? StartScene
-# Start game -> Option -> Scoreboard -> Credit -> Exit[DONE]
+# Start game[DONE] -> Option -> Scoreboard -> Credit -> Exit[DONE]
 # Option would copied from Tetr.io if the DAS ARS etc. were implemented
 # Scoreboard save in csv format
 
-"""Add main game logic and gameplay"""
 """Add SRS rotation"""
 """Add SRS spawn"""
 """Add wall kick"""
 
-"""Add Queue/Next (7-bag system)"""
 """Add ARE"""
 """Add DAS"""
-"""Add Shadow"""
 
 
 # ! Done
 """Add Piece"""
 """Add Drop"""
 """Add Board.py for manage the Tetris tile"""
+"""Add Shadow"""
+"""Add Queue/Next (7-bag system)"""
+"""Add main game logic and gameplay"""
 """Game Tick in each Frame: 100 millisecond / 6"""

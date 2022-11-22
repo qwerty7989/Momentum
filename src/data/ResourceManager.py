@@ -65,3 +65,16 @@ class ResourceManager(object):
             "Medium": self.myFontMedium,
             "Small": self.myFontSmall
         }
+
+        self.sound_path = {
+            "Clearline" : "src\\data\\Sound\\clearline.wav",
+            "Gameover" : "src\\data\\Sound\\gameover.wav",
+            "Rotate" : "src\\data\\Sound\\rotate.wav",
+            "Move" : "src\\data\\Sound\\move.wav",
+            "Select" : "src\\data\\Sound\\select.wav",
+            "Confirm" : "src\\data\\Sound\\confirm.wav",
+            "Gameover" : "src\\data\\Sound\\gameover.wav",
+            "Victory" : "src\\data\\Sound\\victory.wav",
+            "Back" : "src\\data\\Sound\\back.wav",
+            "Drop" : "src\\data\\Sound\\drop.wav"
+        }

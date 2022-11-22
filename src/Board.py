@@ -21,6 +21,8 @@ class Board(object):
         self.block = Globe.Game.ResourceManager.block
         self.block_name = Globe.Game.ResourceManager.block_name
         self.myFont = Globe.Game.ResourceManager.myFont
+        self.soundPath = Globe.Game.ResourceManager.sound_path
+        self.soundManager = Globe.Game.soundManager
 
         # ? Main game clock
         self.Frame = TICK_PER_FRAME
@@ -127,7 +129,13 @@ class Board(object):
         self.lineClearedCounter += self.clearLines()
         self.newPiece()
         if self.intersects() or self.gameOver: # ? Gameover
+            self.soundManager.load(self.soundPath["Gameover"])
+            self.soundManager.play(0)
             Globe.Game.SceneManager.gotoScene("Gameover")
+        else:
+            self.soundManager.load(self.soundPath["Drop"])
+            self.soundManager.play(0)
+            
 
     def clearLines(self):
         lineCleared = 0
@@ -143,7 +151,10 @@ class Board(object):
             else:
                 y -= 1
 
-        print(lineCleared)
+        if lineCleared > 0:
+            self.soundManager.load(self.soundPath["Clearline"])
+            self.soundManager.play(0)
+
         return lineCleared
 
     
@@ -161,10 +172,14 @@ class Board(object):
                     print(py.key.name(event.key))
                 
                 if event.key == KEY_EXIT:
+                    self.soundManager.load(self.soundPath["Back"])
+                    self.soundManager.play(0)
                     Globe.Game.SceneManager.gotoScene("Start")
 
         # ? 40-Lines completed
         if self.autoWin or self.lineClearedCounter >= 40:
+            self.soundManager.load(self.soundPath["Victory"])
+            self.soundManager.play(0)
             Globe.Game.clearedTime = self.timerSecond
             Globe.Game.SceneManager.gotoScene("Scoreboard")
 
@@ -209,6 +224,9 @@ class Board(object):
                     self.piece.movePiece(-1)
                     if self.intersects():
                         self.piece.x = prevX
+                    else:
+                        self.soundManager.load(self.soundPath["Move"])
+                        self.soundManager.play(0)
 
                 # ! Right
                 if keys[KEY_RIGHT]:
@@ -216,6 +234,9 @@ class Board(object):
                     self.piece.movePiece(1)
                     if self.intersects():
                         self.piece.x = prevX
+                    else:
+                        self.soundManager.load(self.soundPath["Move"])
+                        self.soundManager.play(0)
 
                 # ! Down
                 if keys[KEY_DOWN]:
@@ -249,6 +270,9 @@ class Board(object):
                     if self.intersects():
                         self.piece.rotatePiece(-1)
                         self.rotatePressed = False
+                    else:
+                        self.soundManager.load(self.soundPath["Rotate"])
+                        self.soundManager.play(0)
 
                 # ! Rotate Counter Clockwise
                 elif keys[KEY_ROTATE_CCW]:
@@ -258,6 +282,9 @@ class Board(object):
                     if self.intersects():
                         self.piece.rotatePiece(1)
                         self.rotatePressed = False
+                    else:
+                        self.soundManager.load(self.soundPath["Rotate"])
+                        self.soundManager.play(0)
 
                 # ! Rotate 180 Degree
                 elif keys[KEY_ROTATE_180]:
@@ -269,6 +296,9 @@ class Board(object):
                         self.piece.rotatePiece(-1)
                         self.piece.rotatePiece(-1)
                         self.rotatePressed = False
+                    else:
+                        self.soundManager.load(self.soundPath["Rotate"])
+                        self.soundManager.play(0)
 
         elif not (keys[KEY_UP] or keys[KEY_ROTATE_CW] or keys[KEY_ROTATE_CCW] or keys[KEY_ROTATE_180]):
             self.rotatePressed = False
@@ -345,5 +375,5 @@ class Board(object):
         # ? Timer 
         self.writeText("TIME", (200, 200, 200), "Small")
         screen.blit(self.text, ((32 * 5) - 24, (32 * 18)))
-        self.writeText((str)(int(self.timerSecond / 60))+ ":" + (str)(int(self.timerSecond / 10)) + (str)(int(self.timerSecond % 10)), (200, 200, 200), "Small")
+        self.writeText((str)(int(self.timerSecond / 60))+ ":" + (str)(int((self.timerSecond / 10) % 10)) + (str)(int(self.timerSecond % 10)), (200, 200, 200), "Small")
         screen.blit(self.text, ((32 * 5) - 24, (32 * 19)))

@@ -34,6 +34,8 @@ class GameoverScene(object):
                         if self.selectIndex > 1: self.selectIndex = 0
                     
                     if event.key == KEY_EXIT:
+                        self.soundManager.load(self.soundPath["Back"])
+                        self.soundManager.play(0)
                         Globe.Game.SceneManager.gotoScene("Start")
 
                     if event.key == py.K_z: # 

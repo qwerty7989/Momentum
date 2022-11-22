@@ -12,6 +12,8 @@ class ScoreboardScene(object):
         self.title = Globe.Game.ResourceManager.title
         self.myFont = Globe.Game.ResourceManager.myFont
         self.clearedTime = Globe.Game.clearedTime
+        self.soundPath = Globe.Game.ResourceManager.sound_path
+        self.soundManager = Globe.Game.soundManager
 
         # ? Click or not?
         self.confirm = False
@@ -31,9 +33,13 @@ class ScoreboardScene(object):
 
                 if event.type == py.KEYDOWN: # ? Any key pressed
                     if event.key == KEY_UP:
+                        self.soundManager.load(self.soundPath["Select"])
+                        self.soundManager.play(0)
                         self.selectIndex -= 1
                         if self.selectIndex < 0: self.selectIndex = 3
                     elif event.key == KEY_DOWN:
+                        self.soundManager.load(self.soundPath["Select"])
+                        self.soundManager.play(0)
                         self.selectIndex += 1
                         if self.selectIndex > 3: self.selectIndex = 0
                     
@@ -41,9 +47,18 @@ class ScoreboardScene(object):
                         Globe.Game.SceneManager.gotoScene("Start")
 
                     if event.key == py.K_f: # 
+                        self.soundManager.load(self.soundPath["Confirm"])
+                        self.soundManager.play(0)
                         self.isContinue = True
-                        
+                    
+                    if event.key == KEY_EXIT and self.isContinue:
+                        self.soundManager.load(self.soundPath["Back"])
+                        self.soundManager.play(0)
+                        Globe.Game.SceneManager.gotoScene("Start")
+
                     if event.key == py.K_z and self.isContinue: # 
+                        self.soundManager.load(self.soundPath["Confirm"])
+                        self.soundManager.play(0)
                         self.confirm = True
         
         else : # ? Confirm
@@ -59,8 +74,8 @@ class ScoreboardScene(object):
 
             # ? Clear time
             # ! Didn't finish it in time, should save scoreboard to .csv file
-            self.writeText((str)(int(self.clearedTime / 60))+ ":" + (str)(int(self.clearedTime / 10)) + (str)(int(self.clearedTime % 10)), (255, 255, 255), "Big")
-            screen.blit(self.text, ((832 / 2) - 50, (600 / 2) + (60 * self.selectIndex) - 150))
+            self.writeText((str)(int(self.clearedTime / 60))+ ":" + (str)(int((self.clearedTime / 10) % 10)) + (str)(int(self.clearedTime % 10)), (255, 255, 255), "Big")
+            screen.blit(self.text, ((832 / 2) - 50, (600 / 2) - 150))
 
             # ? Cursor
             self.writeText(">", (255, 255, 255), "Medium")
